@@ -1,0 +1,65 @@
+name: Feature or change
+description: Define product, architecture, and implementation work with traceability.
+title: "[Feature]: "
+labels: []
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or outcome
+      description: Describe the user or business problem and intended outcome.
+    validations:
+      required: true
+  - type: input
+    id: requirements
+    attributes:
+      label: Requirement IDs
+      description: List applicable ELV requirement IDs or state that new requirements are proposed.
+      placeholder: ELV-PRG-001, ELV-ACT-002
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: In scope
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Use measurable Given/When/Then statements or equivalent testable criteria.
+    validations:
+      required: true
+  - type: dropdown
+    id: architecture
+    attributes:
+      label: Architecture review
+      options:
+        - Required
+        - Not required
+        - To be determined
+    validations:
+      required: true
+  - type: dropdown
+    id: owner
+    attributes:
+      label: Recommended AI owner
+      options:
+        - ChatGPT - Product and Requirements
+        - Repository Steward
+        - Backend Architect
+        - Claude Code - Implementation
+        - Human decision required
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Dependencies, assumptions, and risks
