@@ -1,0 +1,45 @@
+name: Database Migration Safety
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  migration-safety:
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL }}
+      PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate Prisma schema
+        run: npm run prisma:validate
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Check migration SQL from schema
+        run: npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > migration-preview.sql
+
+      - name: Validate preview migration status (optional)
+        if: ${{ env.PREVIEW_DATABASE_URL != '' }}
+        env:
+          NEXT_PUBLIC_APP_ENV: preview
+          DATABASE_URL: ${{ env.PREVIEW_DATABASE_URL }}
+        run: npm run prisma:status:preview
+
+      - name: Validate prod migration status (optional)
+        if: ${{ env.PROD_DATABASE_URL != '' }}
+        env:
+          NEXT_PUBLIC_APP_ENV: prod
+          DATABASE_URL: ${{ env.PROD_DATABASE_URL }}
+        run: npm run prisma:status:prod

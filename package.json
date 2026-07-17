@@ -6,22 +6,35 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prisma:generate": "prisma generate",
+    "prisma:validate": "dotenv -e .env.dev.example -- prisma validate",
+    "prisma:migrate:dev": "dotenv -e .env.dev -- prisma migrate dev",
+    "prisma:migrate:preview": "dotenv -e .env.preview -- node scripts/migrate-stage.mjs preview",
+    "prisma:migrate:prod": "dotenv -e .env.prod -- node scripts/migrate-stage.mjs prod",
+    "prisma:status:preview": "dotenv -e .env.preview -- node scripts/migrate-stage.mjs preview --status",
+    "prisma:status:prod": "dotenv -e .env.prod -- node scripts/migrate-stage.mjs prod --status",
+    "db:check:env": "node scripts/validate-env.mjs",
+    "db:deploy": "prisma migrate deploy",
+    "db:status": "prisma migrate status"
   },
   "dependencies": {
+    "@prisma/client": "^6.11.1",
     "next": "16.2.7",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
+    "postcss": "^8.5.15",
+    "prisma": "^6.11.1",
     "tailwindcss": "^4",
-    "@tailwindcss/postcss": "^4",
-    "typescript": "^5",
-    "postcss": "^8.5.15"
+    "typescript": "^5"
   }
 }

@@ -1,36 +1,72 @@
-# Elevate Application (Production Track)
+# Elevate Pro V1
 
-This folder is the architecture-first Application project.
-The workspace root remains the active POC project.
+This repository is the production-track Elevate application.
 
-## Goals
-- Keep Application isolated from POC runtime and data.
-- Reuse behavior intentionally, not by direct coupling.
-- Promote validated POC concepts into Application requirements.
+## Environment model
+- dev: local development and migration authoring
+- preview: pre-production verification against production-like data
+- prod: production deployment using committed migrations only
 
-## Local Commands (from workspace root)
-- `npm run dev:application`
-- `npm run build:application`
-- `npm run start:application`
-- `npm run lint:application`
+Each environment must use its own database.
 
-## Initialize as separate GitHub project
-From `application` folder:
-1. `git init`
-2. `git add .`
-3. `git commit -m "Initial Application scaffold"`
-4. `git branch -M main`
-5. `git remote add origin <new-application-repo-url>`
-6. `git push -u origin main`
+## Database architecture baseline
+The initial schema is defined in prisma/schema.prisma and includes:
+- Organization
+- Member
+- Program
+- Enrollment
 
-## Vercel + Database setup (Application only)
-1. Create a new Vercel project rooted at `application`.
-2. Provision a new Application-specific database.
-3. Set Application environment variables in Vercel:
-   - `DATABASE_URL`
-   - `NEXT_PUBLIC_APP_ENV=application`
-4. Keep POC and Application environment variables separate.
+The baseline migration is in prisma/migrations/202607120001_init/migration.sql.
 
-## Boundary rule
-Do not import runtime code from POC paths into Application.
-Reuse should happen by copying/adapting approved code with requirement IDs.
+## One-time setup
+1. Install dependencies.
+2. Copy env templates and provide real connection strings.
+3. Generate Prisma client.
+
+Commands:
+- npm install
+- Copy-Item .env.dev.example .env.dev
+- Copy-Item .env.preview.example .env.preview
+- Copy-Item .env.prod.example .env.prod
+- npm run prisma:generate
+
+## Author and test migrations in dev
+Use dev to create and iterate on migration files.
+
+Command:
+- npm run prisma:migrate:dev
+
+## Validate migration state in preview and prod
+These commands enforce stage matching before running Prisma, preventing accidental cross-environment execution.
+
+Commands:
+- npm run prisma:status:preview
+- npm run prisma:status:prod
+
+## Apply migrations to preview and prod
+Apply committed migrations only.
+
+Commands:
+- npm run prisma:migrate:preview
+- npm run prisma:migrate:prod
+
+## Recommended promotion flow
+1. Author migration in dev.
+2. Run app tests and smoke checks.
+3. Run preview status check and apply preview migration.
+4. Validate preview behavior and performance.
+5. Run prod status check.
+6. Take prod backup/snapshot.
+7. Apply prod migration in controlled window.
+8. Execute post-deploy health checks.
+
+## CI safety checks
+GitHub Actions workflow in .github/workflows/db-migration-safety.yml performs:
+- Prisma schema validation
+- Prisma client generation
+- migration SQL diff generation
+- optional preview/prod migration status checks when secrets exist
+
+Expected repository secrets:
+- PREVIEW_DATABASE_URL
+- PROD_DATABASE_URL
