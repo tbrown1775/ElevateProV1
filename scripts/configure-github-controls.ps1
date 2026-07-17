@@ -28,7 +28,7 @@ if (-not $VerifyOnly) {
         }
         enforce_admins = $true
         required_pull_request_reviews = @{
-            dismissal_restrictions = @{}
+  
             dismiss_stale_reviews = $true
             require_code_owner_reviews = $false
             required_approving_review_count = 1
