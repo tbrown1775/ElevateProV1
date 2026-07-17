@@ -15,7 +15,12 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+!.env.dev.example
+!.env.preview.example
+!.env.prod.example
 
 # misc
 .DS_Store
 *.tsbuildinfo
+.vercel
+.env*
